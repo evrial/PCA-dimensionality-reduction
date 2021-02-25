@@ -41,18 +41,20 @@ class PCA(object):
 
     Example usage
     -------------
+    X = np.random.rand(14,88)  # 2D ndarray
     model = PCA(2)
     eig_projection = model.eigen(X)
     svd_projection = model.svd(X)
     svd_projection2D = model(X)  # callable class
-    eig_projection2D = model(X, method='eig')  # Eigenvector method
-    svd_projection2D[0]  # first component
+    eig_projection2D = model(X, method='eig')  # eigenvector method
+    svd_projection2D[0]  # first component with max variance
+    svd_projection2D[-1]  # last component with least variance
     """
     def __init__(self, n_components=None):
         self.n_components = n_components
 
-    def __call__(self, X, method='svd'):
-        if method == 'svd':
+    def __call__(self, X, method=None):
+        if method is None:
             return self.svd(X)
         return self.eigen(X)
 
@@ -69,6 +71,7 @@ class PCA(object):
         Compute the eigenvalues and right eigenvectors of a square array.
         Project them to new feature space
         """
+        assert X.ndim == 2
         n_samples, n_features = X.shape
         # Estimate if n_components not specified
         self.n_components_ = self.n_components or n_features
@@ -127,6 +130,7 @@ class PCA(object):
         """
         Singular Value Decomposition
         """
+        assert X.ndim == 2
         n_samples, n_features = X.shape
         # Estimate if n_components not specified
         self.n_components_ = self.n_components or n_features
